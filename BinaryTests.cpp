@@ -16,7 +16,14 @@ int tests(){
 //The Godly Movereader
 std::regex chessmove("([A-Z])*([a-h][1-8]|[a-h]|[1-8])*(x)*([a-h][1-8]|O-O-O|O-O)+(=[A-Z])*(#)*(\\+)*");
 
-//
+//Map for more or less converting R,N,B,Q,K to their proper names.
+std::map<char, std::string> piece_converter = {
+    {'K' , "King"},
+    {'Q' , "Queen"},
+    {'R' , "Rook"},
+    {'B' , "Bishop"},
+    {'N' , "Knight"}
+};
 
 void printboard(std::string board){
     std::string retstr = "";
@@ -64,9 +71,6 @@ void removeallboards(std::string board){
 }
 
 std::string announcemove(std::string move){
-    //Some changing strings for return value.
-    std::string piece = "Pawn"
-    //Set default to pawn
 
     //setting up regex
     std::smatch matches;
@@ -81,14 +85,19 @@ std::string announcemove(std::string move){
         //6 is potential mate
         //7 is potential check
 
+    //Some changing strings for return value.
+    std::string piece;
+    if (matches[1] != "") piece = piece_converter.find(matches[1].str()[0])->second;
+    else piece = "Pawn";
+    //Set default to pawn
 
     if (matches[4]=="O-O-O") return "Long Castle.";
     else if (matches[4]=="O-O") return "Castle.";
         //Basically skip all the hullabaloo if it's a castle.
-    return "WIP";
+    return piece + "goes to " + matches[4]+ ".\n";
 }
 
 int main(){
-    std::cout<<announcemove("O-O-O");
+    std::cout<<announcemove("Qe2");
     return 0;
 };
